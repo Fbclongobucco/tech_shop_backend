@@ -1,0 +1,14 @@
+spring:
+    datasource:
+        url: jdbc:postgresql://localhost:5432/tech-shop-db
+        driver-class-name: org.postgresql.Driver
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        username: postgres
+        password: 91710956
+
+    jpa:
+        show-sql: true
+        hibernate:
+            format_sql: true
+            ddl-auto: create-drop
+

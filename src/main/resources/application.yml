@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: tech_shop
+  profiles:
+    active: dev
