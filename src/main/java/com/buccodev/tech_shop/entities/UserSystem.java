@@ -1,13 +1,10 @@
 package com.buccodev.tech_shop.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users_tb")
-public class User {
+public class UserSystem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +23,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Roles role;
 
-    public User() {}
+    public UserSystem() {}
 
-    public User(Long id, String username, String password, String email) {
+    public UserSystem(Long id, String username, String password, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
