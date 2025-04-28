@@ -1,5 +1,6 @@
 package com.buccodev.tech_shop.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -21,13 +22,13 @@ public class Order {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal totalValue;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
