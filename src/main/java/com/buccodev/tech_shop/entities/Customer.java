@@ -36,6 +36,8 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     private List<Order> orders = new ArrayList<>();
 
+    private Roles role;
+
     public Customer() {}
 
     public Customer(Long id, String name, String email, String password, String phone) {
@@ -44,6 +46,7 @@ public class Customer {
         this.email = email;
         this.password = password;
         this.phone = phone;
+        this.role = Roles.CUSTOMER;
     }
 
     public Long getId() {
@@ -96,6 +99,10 @@ public class Customer {
 
     public List<Order> getOrders() {
         return orders;
+    }
+
+    public Roles getRole() {
+        return role;
     }
 
     @Override
