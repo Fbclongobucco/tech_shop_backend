@@ -8,6 +8,7 @@ import com.buccodev.tech_shop.repository.CustomerRepository;
 import com.buccodev.tech_shop.repository.OrderRepository;
 import com.buccodev.tech_shop.utils.dtos.order_dtos.OrderRequestDto;
 import com.buccodev.tech_shop.utils.dtos.order_dtos.OrderResponseDto;
+import com.buccodev.tech_shop.utils.dtos.order_items_dtos.OrderItemResponseDto;
 import com.buccodev.tech_shop.utils.mappers.OrderMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
@@ -91,6 +92,10 @@ public class OrderService {
         order.getOrderItems().clear();
         order.getOrderItems().addAll(listOrderItems);
         orderRepository.save(order);
+    }
+
+    public List<OrderItemResponseDto> findAllOrderItemsByOrderId(Long id){
+        return orderItemService.findOrderItemsByOrderId(id);
     }
     
 }

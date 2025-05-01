@@ -43,12 +43,12 @@ public class ProductService {
         productRepository.deleteById(product.getId());
     }
 
-    public ProductResponseDto getProductById(Long id) {
+    public ProductResponseDto findProductById(Long id) {
         var product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         return ProductMapper.productToProductResponseDto(product);
     }
 
-    public List<ProductResponseDto> getAllProducts(Integer page, Integer size) {
+    public List<ProductResponseDto> findAllProducts(Integer page, Integer size) {
         if(page == null || page < 0) {
             page = 0;
         }
@@ -61,7 +61,7 @@ public class ProductService {
         return productRepository.findAll(pageRequest).stream().map(ProductMapper::productToProductResponseDto).toList();
     }
 
-    public List<ProductResponseDto> getProductsByName(String name, Integer page, Integer size) {
+    public List<ProductResponseDto> findProductsByName(String name, Integer page, Integer size) {
         if(page == null || page < 0) {
             page = 0;
         }

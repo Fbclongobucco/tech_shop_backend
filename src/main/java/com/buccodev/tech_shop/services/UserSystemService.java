@@ -7,9 +7,11 @@ import com.buccodev.tech_shop.utils.dtos.user_system_dto.UserSystemResponseDto;
 import com.buccodev.tech_shop.utils.dtos.user_system_dto.UserSystemUpdateRequestDto;
 import com.buccodev.tech_shop.utils.mappers.UserSystemMapper;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserSystemService {
 
     private final UserSystemRepository userSystemRepository;
@@ -46,7 +48,7 @@ public class UserSystemService {
         return UserSystemMapper.userSystemToUserSystemResponseDto(userSystem);
     }
 
-    public List<UserSystemResponseDto> getAllUserSystems(Integer page, Integer size) {
+    public List<UserSystemResponseDto> findAllUserSystems(Integer page, Integer size) {
 
         if (page == null || page < 0) {
             page = 0;
@@ -60,10 +62,14 @@ public class UserSystemService {
         return userSystemRepository.findAll(pageRequest).stream().map(UserSystemMapper::userSystemToUserSystemResponseDto).toList();
     }
 
-    public UserSystemResponseDto getUserSystemsByName(String name) {
+    public UserSystemResponseDto findUserSystemsByName(String name) {
 
         var userSystem = userSystemRepository.findByUsername(name).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return UserSystemMapper.userSystemToUserSystemResponseDto(userSystem);
     }
+
+
+
+
 }

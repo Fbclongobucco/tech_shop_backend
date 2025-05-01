@@ -34,22 +34,17 @@ public class OrderItemsService {
         return new OrderItem(null, order, product, orderItemRequestDto.quantity());
     }
 
-    public OrderItemResponseDto getOrderItemById(Long id) {
+    public OrderItemResponseDto findOrderItemById(Long id) {
         var orderItem = orderItemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order item not found"));
         return OrderItemMapper.orderItemRequestDtoToOrderItem(orderItem);
     }
 
-    public List<OrderItemResponseDto> getOrderItemsByOrderId(Long orderId) {
+    public List<OrderItemResponseDto> findOrderItemsByOrderId(Long orderId) {
         var order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         return order.getOrderItems().stream()
                 .map(OrderItemMapper::orderItemRequestDtoToOrderItem)
                 .toList();
-    }
-
-    public void deleteOrderItemById(Long id){
-        var orderItem = orderItemRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Order Item not found"));
-        orderItemRepository.delete(orderItem);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.buccodev.tech_shop.services;
 
+import com.buccodev.tech_shop.entities.Customer;
+import com.buccodev.tech_shop.exceptions.CredentialInvalidException;
 import com.buccodev.tech_shop.exceptions.ResourceDuplicateException;
 import com.buccodev.tech_shop.exceptions.ResourceNotFoundException;
 import com.buccodev.tech_shop.repository.CustomerRepository;
@@ -9,15 +11,19 @@ import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerResponseDto;
 import com.buccodev.tech_shop.utils.mappers.CustomerMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public CustomerResponseDto createCustomer(CustomerRequestDto requestCustomerDto) {
@@ -26,7 +32,12 @@ public class CustomerService {
             throw new ResourceDuplicateException("Customer with email " + requestCustomerDto.email() + " already exists");
         }
 
+        var password = passwordEncoder.encode(requestCustomerDto.password());
+
         var customer = CustomerMapper.customerRequestDtoToCustomer(requestCustomerDto);
+
+        customer.setPassword(password);
+
         return CustomerMapper.customerToResponseCustomerDto(customerRepository.save(customer));
     }
 
@@ -62,5 +73,10 @@ public class CustomerService {
         PageRequest pageRequest = PageRequest.of(page, size);
         return customerRepository.findAll(pageRequest).stream().map(CustomerMapper::customerToResponseCustomerDto).toList();
     }
+
+    public Customer getByEmail(String email) {
+        return customerRepository.findByEmail(email).orElseThrow(() -> new CredentialInvalidException("Invalid credentials"));
+    }
+
 
 }
