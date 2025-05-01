@@ -4,15 +4,18 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "customer_tb")
-public class Customer {
+public class Customer implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +39,8 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     private List<Order> orders = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(20)")
     private Roles role;
 
     public Customer() {}
@@ -73,8 +78,18 @@ public class Customer {
         this.email = email;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
     public void setPassword(String password) {
@@ -101,8 +116,8 @@ public class Customer {
         return orders;
     }
 
-    public Roles getRole() {
-        return role;
+    public String getRole() {
+        return role.getRole();
     }
 
     @Override

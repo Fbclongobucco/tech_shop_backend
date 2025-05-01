@@ -35,6 +35,7 @@ public class Product {
         this.name = name;
         this.description = description;
         this.price = price;
+        this.imageUrl = "https://placehold.jp/150x150.pngwww.google.com";
         this.quantityStock = 0;
     }
 

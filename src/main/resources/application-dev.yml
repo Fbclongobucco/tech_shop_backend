@@ -1,14 +1,14 @@
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5432/app_tech_db
+        url: jdbc:postgresql://localhost:5432/tech-shop-db
         driver-class-name: org.postgresql.Driver
         username: postgres
-        password: F@b917109
+        password: 91710956
 
     jpa:
         show-sql: true
         hibernate:
-            ddl-auto: update
+            ddl-auto: create-drop
             format_sql: true
         properties:
             hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect

@@ -3,7 +3,7 @@ package com.buccodev.tech_shop.controllers;
 import com.buccodev.tech_shop.services.CustomerService;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerResponseDto;
-import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerResquestUpdateDto;
+import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestUpdateDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +33,7 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateCustomer(@PathVariable Long id,
-                                               @RequestBody CustomerResquestUpdateDto customerResquestUpdateDto) {
+                                               @RequestBody CustomerRequestUpdateDto customerResquestUpdateDto) {
         customerService.updateCustomer(id, customerResquestUpdateDto);
         return ResponseEntity.ok().build();
     }
@@ -45,11 +45,11 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerResponseDto> createCustomer(CustomerRequestDto customerRequestDto){
+    public ResponseEntity<CustomerResponseDto> createCustomer(@RequestBody CustomerRequestDto customerRequestDto){
 
         var customer = customerService.createCustomer(customerRequestDto);
 
-        URI uri = URI.create("/customers/" + customer.id());
+        URI uri = URI.create("/tech-shop/customers/" + customer.id());
 
         return ResponseEntity.created(uri).body(customer);
     }

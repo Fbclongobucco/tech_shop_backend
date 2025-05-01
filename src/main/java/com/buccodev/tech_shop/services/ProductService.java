@@ -7,11 +7,11 @@ import com.buccodev.tech_shop.utils.dtos.product_dto.ProductResponseDto;
 import com.buccodev.tech_shop.utils.dtos.product_dto.ProductUpdateRequestDto;
 import com.buccodev.tech_shop.utils.mappers.ProductMapper;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.DecimalMax;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class ProductService {
 
@@ -22,6 +22,7 @@ public class ProductService {
     }
 
     public ProductResponseDto createProduct(ProductRequestDto productRequestDto) {
+
         var product = ProductMapper.productRequestDtoToProduct(productRequestDto);
         productRepository.save(product);
         return ProductMapper.productToProductResponseDto(product);

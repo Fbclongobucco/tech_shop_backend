@@ -26,7 +26,7 @@ public class OrderController {
         return ResponseEntity.created(uri).body(order);
     }
 
-    @GetMapping("/{customerId}")
+    @GetMapping("/all-orders/{customerId}")
     public ResponseEntity<List<OrderResponseDto>> getAllOrdersByCustomerId(@PathVariable Long customerId,
                                                                            @RequestParam(required = false) Integer page,
                                                                            @RequestParam(required = false) Integer size) {
@@ -46,10 +46,5 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateOrder(@PathVariable Long id, @RequestBody OrderRequestDto requestOrderDto) {
-        orderService.updateOrder(id, requestOrderDto);
-        return ResponseEntity.noContent().build();
-    }
 
 }

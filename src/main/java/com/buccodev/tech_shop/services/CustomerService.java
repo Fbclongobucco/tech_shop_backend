@@ -5,17 +5,19 @@ import com.buccodev.tech_shop.exceptions.CredentialInvalidException;
 import com.buccodev.tech_shop.exceptions.ResourceDuplicateException;
 import com.buccodev.tech_shop.exceptions.ResourceNotFoundException;
 import com.buccodev.tech_shop.repository.CustomerRepository;
-import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerResquestUpdateDto;
+import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestUpdateDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerResponseDto;
 import com.buccodev.tech_shop.utils.mappers.CustomerMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
@@ -32,17 +34,15 @@ public class CustomerService {
             throw new ResourceDuplicateException("Customer with email " + requestCustomerDto.email() + " already exists");
         }
 
-        var password = passwordEncoder.encode(requestCustomerDto.password());
-
         var customer = CustomerMapper.customerRequestDtoToCustomer(requestCustomerDto);
-
-        customer.setPassword(password);
+        customer.setPassword(passwordEncoder.encode(requestCustomerDto.password()));
+        customer.setCreatedAt(LocalDateTime.now());
 
         return CustomerMapper.customerToResponseCustomerDto(customerRepository.save(customer));
     }
 
     @Transactional
-    public void updateCustomer(Long id, CustomerResquestUpdateDto requestUpdateDto) {
+    public void updateCustomer(Long id, CustomerRequestUpdateDto requestUpdateDto) {
         var customer = customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         customer.setName(requestUpdateDto.name());
@@ -65,11 +65,9 @@ public class CustomerService {
         if (page == null || page < 0) {
             page = 0;
         }
-
         if (size == null || size < 1) {
             size = 10;
         }
-
         PageRequest pageRequest = PageRequest.of(page, size);
         return customerRepository.findAll(pageRequest).stream().map(CustomerMapper::customerToResponseCustomerDto).toList();
     }

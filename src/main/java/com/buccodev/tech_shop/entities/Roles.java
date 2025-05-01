@@ -1,7 +1,7 @@
 package com.buccodev.tech_shop.entities;
 
 public enum Roles {
-    BASIC("basic"), ADMIN("admin"), CUSTOMER("cUSTOMER");
+    BASIC("basic"), ADMIN("admin"), CUSTOMER("customer");
 
     private final String role;
 

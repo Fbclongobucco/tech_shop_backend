@@ -10,9 +10,10 @@ import com.buccodev.tech_shop.utils.dtos.order_items_dtos.OrderItemRequestDto;
 import com.buccodev.tech_shop.utils.dtos.order_items_dtos.OrderItemResponseDto;
 import com.buccodev.tech_shop.utils.mappers.OrderItemMapper;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class OrderItemsService {
 
     private final OrderItemRepository orderItemRepository;
@@ -30,6 +31,8 @@ public class OrderItemsService {
 
         var product = productRepository.findById(orderItemRequestDto
                 .productId()).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+
 
         return new OrderItem(null, order, product, orderItemRequestDto.quantity());
     }

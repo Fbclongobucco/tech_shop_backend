@@ -8,16 +8,18 @@ import com.buccodev.tech_shop.repository.CustomerRepository;
 import com.buccodev.tech_shop.repository.OrderRepository;
 import com.buccodev.tech_shop.utils.dtos.order_dtos.OrderRequestDto;
 import com.buccodev.tech_shop.utils.dtos.order_dtos.OrderResponseDto;
+import com.buccodev.tech_shop.utils.dtos.order_items_dtos.OrderItemRequestDto;
 import com.buccodev.tech_shop.utils.dtos.order_items_dtos.OrderItemResponseDto;
 import com.buccodev.tech_shop.utils.mappers.OrderMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
+@Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -33,18 +35,17 @@ public class OrderService {
     @Transactional
     public OrderResponseDto createOrder(OrderRequestDto requestOrderDto) {
 
-        var order = new Order();
-
         var customer = customerRepository.findById(requestOrderDto.customerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
-        order.setCustomer(customer);
+        var order = new Order(null, customer, requestOrderDto.createdAt());
 
         var listOrderItems = requestOrderDto.orderItems().stream()
                 .map(items -> orderItemService.createOrderItem(items, order))
                 .toList();
 
-        order.getOrderItems().addAll(listOrderItems);
+        order.addOrderItem(listOrderItems);
+
         orderRepository.save(order);
 
         return OrderMapper.toOrderResponseDtoFromOrder(order);
@@ -79,23 +80,11 @@ public class OrderService {
         orderRepository.deleteById(order.getId());
     }
 
-    @Transactional
-    public void updateOrder(Long id, OrderRequestDto requestOrderDto) {
-        var order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
-
-        order.setCreatedAt(requestOrderDto.createdAt());
-
-        var listOrderItems = requestOrderDto.orderItems().stream()
-                .map(items -> orderItemService.createOrderItem(items, order))
-                .toList();
-
-        order.getOrderItems().clear();
-        order.getOrderItems().addAll(listOrderItems);
-        orderRepository.save(order);
-    }
 
     public List<OrderItemResponseDto> findAllOrderItemsByOrderId(Long id){
         return orderItemService.findOrderItemsByOrderId(id);
     }
+
+
     
 }
