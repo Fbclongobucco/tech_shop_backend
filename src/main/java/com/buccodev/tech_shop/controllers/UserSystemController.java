@@ -21,32 +21,33 @@ public class UserSystemController {
     }
 
     @PostMapping
-    public ResponseEntity<UserSystemResponseDto> createUserSystem(UserSystemRequestDto requestUserSystemDto) {
+    public ResponseEntity<UserSystemResponseDto> createUserSystem(@RequestBody UserSystemRequestDto requestUserSystemDto) {
         var userSystem = userSystemService.createUserSystem(requestUserSystemDto);
         URI uri = URI.create("/tech-shop/user-system/" + userSystem.id());
         return ResponseEntity.created(uri).body(userSystem);
     }
 
-    @PutMapping
-    public ResponseEntity<Void> updateUserSystem(Long id, UserSystemUpdateRequestDto requestUserSystemDto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateUserSystem(@PathVariable Long id, @RequestBody UserSystemUpdateRequestDto requestUserSystemDto) {
         userSystemService.updateUserSystem(id, requestUserSystemDto);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserSystemById(Long id) {
+    public ResponseEntity<Void> deleteUserSystemById(@PathVariable Long id) {
         userSystemService.deleteUserSystemById(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserSystemResponseDto> getUserSystemById(Long id) {
+    public ResponseEntity<UserSystemResponseDto> getUserSystemById(@PathVariable Long id) {
         var user = userSystemService.getUserSystemById(id);
         return ResponseEntity.ok(user);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserSystemResponseDto>> findAllUserSystems(Integer page, Integer size) {
+    public ResponseEntity<List<UserSystemResponseDto>> findAllUserSystems(@RequestParam(required = false) Integer page,
+                                                                          @RequestParam(required = false)  Integer size) {
         var user = userSystemService.findAllUserSystems(page, size);
         return ResponseEntity.ok(user);
     }

@@ -27,14 +27,15 @@ public class OrderItemsService {
         this.productRepository = productRepository;
     }
 
+    @Transactional
     public OrderItem createOrderItem(OrderItemRequestDto orderItemRequestDto, Order order) {
 
         var product = productRepository.findById(orderItemRequestDto
                 .productId()).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
+        var orderItem = new OrderItem(null, order, product, orderItemRequestDto.quantity());
 
-
-        return new OrderItem(null, order, product, orderItemRequestDto.quantity());
+        return orderItemRepository.save(orderItem);
     }
 
     public OrderItemResponseDto findOrderItemById(Long id) {
@@ -48,6 +49,17 @@ public class OrderItemsService {
         return order.getOrderItems().stream()
                 .map(OrderItemMapper::orderItemRequestDtoToOrderItem)
                 .toList();
+    }
+
+    @Transactional
+    public void updateOrderItem(Long orderId, List<OrderItemRequestDto> orderItemRequestDto) {
+
+       var order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+       orderItemRequestDto.forEach(orderItem -> {
+           var product = productRepository.findById(orderItem.productId()).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+           orderItemRepository.save(new OrderItem(null, order, product, orderItem.quantity()));
+       });
     }
 
 }

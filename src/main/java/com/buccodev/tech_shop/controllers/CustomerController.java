@@ -4,6 +4,7 @@ import com.buccodev.tech_shop.services.CustomerService;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerResponseDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestUpdateDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +46,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerResponseDto> createCustomer(@RequestBody CustomerRequestDto customerRequestDto){
+    public ResponseEntity<CustomerResponseDto> createCustomer(@RequestBody @Valid CustomerRequestDto customerRequestDto){
 
         var customer = customerService.createCustomer(customerRequestDto);
 

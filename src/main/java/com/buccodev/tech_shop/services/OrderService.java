@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -85,6 +86,20 @@ public class OrderService {
         return orderItemService.findOrderItemsByOrderId(id);
     }
 
+    @Transactional
+    public void updateOrder(Long id, List<OrderItemRequestDto> requestOrderDto) {
+        var order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
+
+        var listOrderItems = requestOrderDto.stream()
+                .map(items -> orderItemService.createOrderItem(items, order))
+                .toList();
+
+        order.getOrderItems().clear();
+
+        order.addOrderItem(listOrderItems);
+
+        orderRepository.save(order);
+    }
     
 }

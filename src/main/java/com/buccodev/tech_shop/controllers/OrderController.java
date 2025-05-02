@@ -3,6 +3,7 @@ package com.buccodev.tech_shop.controllers;
 import com.buccodev.tech_shop.services.OrderService;
 import com.buccodev.tech_shop.utils.dtos.order_dtos.OrderRequestDto;
 import com.buccodev.tech_shop.utils.dtos.order_dtos.OrderResponseDto;
+import com.buccodev.tech_shop.utils.dtos.order_items_dtos.OrderItemRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +11,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("tech-shop/orders")
+@RequestMapping("/tech-shop/orders")
 public class OrderController {
 
     private final OrderService orderService;
@@ -46,5 +47,10 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateOrder(@PathVariable Long id, @RequestBody List<OrderItemRequestDto> requestOrderItemsDto) {
+        orderService.updateOrder(id, requestOrderItemsDto);
+        return ResponseEntity.noContent().build();
+    }
 
 }

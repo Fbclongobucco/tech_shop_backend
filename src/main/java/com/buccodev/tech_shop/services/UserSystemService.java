@@ -29,7 +29,6 @@ public class UserSystemService {
         var userSystem = userSystemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         userSystem.setUsername(requestUserSystemDto.username());
-        userSystem.setEmail(requestUserSystemDto.email());
         userSystem.setRole(requestUserSystemDto.role());
         userSystemRepository.save(userSystem);
     }
