@@ -24,6 +24,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.findProductById(id));
     }
 
+    @GetMapping("/name/{name}")
+    public ResponseEntity<ProductResponseDto> getProductsByName(@PathVariable String name) {
+        return ResponseEntity.ok(productService.findProductsByName(name));
+    }
+
     @GetMapping
     public ResponseEntity<List<ProductResponseDto>> getAllProducts(@RequestParam(required = false) Integer page,
                                                                   @RequestParam(required = false)  Integer size) {
@@ -45,5 +50,13 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto productRequestDto) {
         return ResponseEntity.ok(productService.createProduct(productRequestDto));
+    }
+
+    @GetMapping("/category/{name}")
+    public ResponseEntity<List<ProductResponseDto>> getProductsByCategory(@PathVariable String name,
+                                                                          @RequestParam(required = false) Integer page,
+                                                                          @RequestParam(required = false) Integer size) {
+        var products = productService.findProductsByCategory(name, page, size);
+        return ResponseEntity.ok(products);
     }
 }

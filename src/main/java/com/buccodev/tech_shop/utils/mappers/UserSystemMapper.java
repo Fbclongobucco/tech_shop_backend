@@ -6,11 +6,11 @@ import com.buccodev.tech_shop.utils.dtos.user_system_dto.UserSystemResponseDto;
 
 public class UserSystemMapper {
 
-    public static UserSystemResponseDto userSystemToUserSystemResponseDto(UserSystem userSystem) {
+    public static UserSystemResponseDto toUserSystemResponseDto(UserSystem userSystem) {
         return new UserSystemResponseDto(userSystem.getId(), userSystem.getUsername(), userSystem.getEmail(), userSystem.getRole());
     }
 
-    public static UserSystem userSystemRequestDtoToUserSystem(UserSystemRequestDto userSystemRequestDto) {
+    public static UserSystem toUserSystem(UserSystemRequestDto userSystemRequestDto) {
         return new UserSystem(null, userSystemRequestDto.username(), userSystemRequestDto.password(), userSystemRequestDto.email());
     }
 }

@@ -3,6 +3,7 @@ package com.buccodev.tech_shop.exceptions;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,5 +52,26 @@ public class ControllerErrorAdvice {
 
         return ResponseEntity.status(status)
                 .body(new StandardError(timestamp, status.value(), request.getRequestURI(), errors));
+    }
+
+    @ExceptionHandler(OrderItemProcessableException.class)
+    public ResponseEntity<StandardError> handlerOrderItemProcessableException(OrderItemProcessableException e, HttpServletRequest request) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        var status = HttpStatus.UNPROCESSABLE_ENTITY;
+        return ResponseEntity.status(status).body(new StandardError(timestamp, status.value(), request.getRequestURI(), List.of(Map.of("message", e.getMessage()))));
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<StandardError> handlerException(RuntimeException e, HttpServletRequest request) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        var status = HttpStatus.INTERNAL_SERVER_ERROR;
+        return ResponseEntity.status(status).body(new StandardError(timestamp, status.value(), request.getRequestURI(), List.of(Map.of("message", e.getMessage()))));
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<StandardError> handlerHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        var status = HttpStatus.METHOD_NOT_ALLOWED;
+        return ResponseEntity.status(status).body(new StandardError(timestamp, status.value(), request.getRequestURI(), List.of(Map.of("message", e.getMessage()))));
     }
 }

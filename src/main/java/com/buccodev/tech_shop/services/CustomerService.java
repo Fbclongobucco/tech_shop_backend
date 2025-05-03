@@ -34,11 +34,11 @@ public class CustomerService {
             throw new ResourceDuplicateException("Customer with email " + requestCustomerDto.email() + " already exists");
         }
 
-        var customer = CustomerMapper.customerRequestDtoToCustomer(requestCustomerDto);
+        var customer = CustomerMapper.toCustomer(requestCustomerDto);
         customer.setPassword(passwordEncoder.encode(requestCustomerDto.password()));
         customer.setCreatedAt(LocalDateTime.now());
 
-        return CustomerMapper.customerToResponseCustomerDto(customerRepository.save(customer));
+        return CustomerMapper.toResponseCustomerDto(customerRepository.save(customer));
     }
 
     @Transactional
@@ -57,7 +57,7 @@ public class CustomerService {
 
     public CustomerResponseDto getCustomerById(Long id) {
         var customer = customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-        return CustomerMapper.customerToResponseCustomerDto(customer);
+        return CustomerMapper.toResponseCustomerDto(customer);
     }
 
     public List<CustomerResponseDto> getAllCustomers(Integer page, Integer size) {
@@ -69,7 +69,7 @@ public class CustomerService {
             size = 10;
         }
         PageRequest pageRequest = PageRequest.of(page, size);
-        return customerRepository.findAll(pageRequest).stream().map(CustomerMapper::customerToResponseCustomerDto).toList();
+        return customerRepository.findAll(pageRequest).stream().map(CustomerMapper::toResponseCustomerDto).toList();
     }
 
     public Customer getByEmail(String email) {

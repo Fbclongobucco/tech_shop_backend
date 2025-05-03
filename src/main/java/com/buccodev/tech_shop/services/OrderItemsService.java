@@ -2,6 +2,7 @@ package com.buccodev.tech_shop.services;
 
 import com.buccodev.tech_shop.entities.Order;
 import com.buccodev.tech_shop.entities.OrderItem;
+import com.buccodev.tech_shop.exceptions.OrderItemProcessableException;
 import com.buccodev.tech_shop.exceptions.ResourceNotFoundException;
 import com.buccodev.tech_shop.repository.OrderItemRepository;
 import com.buccodev.tech_shop.repository.OrderRepository;
@@ -33,6 +34,10 @@ public class OrderItemsService {
         var product = productRepository.findById(orderItemRequestDto
                 .productId()).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
+        if(product.getQuantityStock() < orderItemRequestDto.quantity()) {
+            throw new OrderItemProcessableException("Out of stock");
+        }
+
         var orderItem = new OrderItem(null, order, product, orderItemRequestDto.quantity());
 
         return orderItemRepository.save(orderItem);
@@ -40,14 +45,14 @@ public class OrderItemsService {
 
     public OrderItemResponseDto findOrderItemById(Long id) {
         var orderItem = orderItemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order item not found"));
-        return OrderItemMapper.orderItemRequestDtoToOrderItem(orderItem);
+        return OrderItemMapper.toOrderItem(orderItem);
     }
 
     public List<OrderItemResponseDto> findOrderItemsByOrderId(Long orderId) {
         var order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         return order.getOrderItems().stream()
-                .map(OrderItemMapper::orderItemRequestDtoToOrderItem)
+                .map(OrderItemMapper::toOrderItem)
                 .toList();
     }
 

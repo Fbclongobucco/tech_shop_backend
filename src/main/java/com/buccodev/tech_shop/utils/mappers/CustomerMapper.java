@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 public class CustomerMapper {
 
-    public static CustomerResponseDto customerToResponseCustomerDto(Customer customer) {
+    public static CustomerResponseDto toResponseCustomerDto(Customer customer) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
         String formattedDate = (customer.getCreatedAt() != null)
@@ -18,7 +18,12 @@ public class CustomerMapper {
                 customer.getPhone(), formattedDate);
     }
 
-    public static Customer customerRequestDtoToCustomer(CustomerRequestDto requestCustomerDto) {
+    public static Customer toCustomer(CustomerRequestDto requestCustomerDto) {
         return new Customer(null, requestCustomerDto.name(), requestCustomerDto.email(), requestCustomerDto.password(), requestCustomerDto.phone());
+    }
+
+    public static CustomerResponseDto toResponseCustomerDtoToOrder(Customer customer) {
+        return new CustomerResponseDto(customer.getId(), customer.getName(), customer.getEmail(),
+                customer.getPhone(), null);
     }
 }

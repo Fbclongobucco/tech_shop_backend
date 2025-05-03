@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -38,8 +39,9 @@ public class OrderService {
 
         var customer = customerRepository.findById(requestOrderDto.customerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
-        var order = new Order(null, customer, requestOrderDto.createdAt());
+        var order = new Order(null, customer, LocalDateTime.now());
 
         var listOrderItems = requestOrderDto.orderItems().stream()
                 .map(items -> orderItemService.createOrderItem(items, order))
@@ -47,9 +49,7 @@ public class OrderService {
 
         order.addOrderItem(listOrderItems);
 
-        orderRepository.save(order);
-
-        return OrderMapper.toOrderResponseDtoFromOrder(order);
+        return OrderMapper.toOrderResponseDtoFromOrder(orderRepository.save(order));
 
     }
 

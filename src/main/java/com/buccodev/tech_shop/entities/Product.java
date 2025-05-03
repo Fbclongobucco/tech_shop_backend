@@ -28,12 +28,17 @@ public class Product {
     @Column(nullable = false)
     private Integer quantityStock;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     public Product() {}
 
-    public Product(Long id, String name, String description, BigDecimal price) {
+    public Product(Long id, String name, String description, Category category, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.category = category;
         this.price = price;
         this.imageUrl = "https://placehold.jp/150x150.pngwww.google.com";
         this.quantityStock = 0;
@@ -85,6 +90,14 @@ public class Product {
 
     public void setQuantityStock(Integer quantityStock) {
         this.quantityStock = quantityStock;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     @Override

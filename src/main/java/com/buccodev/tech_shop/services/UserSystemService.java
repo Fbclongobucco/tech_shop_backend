@@ -21,8 +21,8 @@ public class UserSystemService {
     }
 
     public UserSystemResponseDto createUserSystem(UserSystemRequestDto requestUserSystemDto) {
-        var userSystem = UserSystemMapper.userSystemRequestDtoToUserSystem(requestUserSystemDto);
-        return UserSystemMapper.userSystemToUserSystemResponseDto(userSystemRepository.save(userSystem));
+        var userSystem = UserSystemMapper.toUserSystem(requestUserSystemDto);
+        return UserSystemMapper.toUserSystemResponseDto(userSystemRepository.save(userSystem));
     }
 
     public void updateUserSystem(Long id, UserSystemUpdateRequestDto requestUserSystemDto) {
@@ -44,7 +44,7 @@ public class UserSystemService {
 
         var userSystem = userSystemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return UserSystemMapper.userSystemToUserSystemResponseDto(userSystem);
+        return UserSystemMapper.toUserSystemResponseDto(userSystem);
     }
 
     public List<UserSystemResponseDto> findAllUserSystems(Integer page, Integer size) {
@@ -58,14 +58,14 @@ public class UserSystemService {
         }
 
         PageRequest pageRequest = PageRequest.of(page, size);
-        return userSystemRepository.findAll(pageRequest).stream().map(UserSystemMapper::userSystemToUserSystemResponseDto).toList();
+        return userSystemRepository.findAll(pageRequest).stream().map(UserSystemMapper::toUserSystemResponseDto).toList();
     }
 
     public UserSystemResponseDto findUserSystemsByName(String name) {
 
         var userSystem = userSystemRepository.findByUsername(name).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return UserSystemMapper.userSystemToUserSystemResponseDto(userSystem);
+        return UserSystemMapper.toUserSystemResponseDto(userSystem);
     }
 
 

@@ -1,6 +1,7 @@
 package com.buccodev.tech_shop.utils.dtos.customers_dtos;
 
-import java.time.LocalDateTime;
 
-public record CustomerResponseDto(Long id, String name, String email, String phone, String createdAt) {
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+public record CustomerResponseDto(Long id, String name, String email, String phone, @JsonInclude(JsonInclude.Include.NON_NULL) String createdAt) {
 }
