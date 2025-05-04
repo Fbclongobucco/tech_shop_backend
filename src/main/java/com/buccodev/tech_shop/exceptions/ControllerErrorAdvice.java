@@ -62,7 +62,7 @@ public class ControllerErrorAdvice {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<StandardError> handlerException(RuntimeException e, HttpServletRequest request) {
+    public ResponseEntity<StandardError> handlerExceptionGlobal(RuntimeException e, HttpServletRequest request) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         var status = HttpStatus.INTERNAL_SERVER_ERROR;
         return ResponseEntity.status(status).body(new StandardError(timestamp, status.value(), request.getRequestURI(), List.of(Map.of("message", e.getMessage()))));

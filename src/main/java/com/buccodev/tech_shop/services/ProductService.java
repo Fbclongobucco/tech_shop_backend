@@ -1,5 +1,6 @@
 package com.buccodev.tech_shop.services;
 
+import com.buccodev.tech_shop.entities.Product;
 import com.buccodev.tech_shop.exceptions.ResourceNotFoundException;
 import com.buccodev.tech_shop.repository.CategoryRepository;
 import com.buccodev.tech_shop.repository.ProductRepository;
@@ -8,7 +9,10 @@ import com.buccodev.tech_shop.utils.dtos.product_dto.ProductResponseDto;
 import com.buccodev.tech_shop.utils.dtos.product_dto.ProductUpdateRequestDto;
 import com.buccodev.tech_shop.utils.mappers.ProductMapper;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -79,15 +83,23 @@ public class ProductService {
         return ProductMapper.toProductResponseDto(product);
     }
 
-    public List<ProductResponseDto> findProductsByCategory(String name, Integer page, Integer size) {
+
+    public List<ProductResponseDto> findProductsByCategory(String category, Integer page, Integer size) {
         if (page == null || page < 0) {
             page = 0;
         }
         if(size == null || size < 1) {
             size = 10;
         }
+        Pageable pages = PageRequest.of(page, size);
 
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return productRepository.findByCategory(name, pageRequest).stream().map(ProductMapper::toProductResponseDto).toList();
+        Specification<Product> categoryEqual = (root, query, cb)
+                -> cb.like( cb.upper( root.get("category").get("name")), "%" + category.toUpperCase() + "%");
+
+        return  productRepository.findAll(categoryEqual, pages).stream()
+                .map(ProductMapper::toProductResponseDto).toList();
+
     }
+
+
 }

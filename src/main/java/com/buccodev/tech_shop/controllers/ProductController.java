@@ -52,11 +52,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.createProduct(productRequestDto));
     }
 
-    @GetMapping("/category/{name}")
-    public ResponseEntity<List<ProductResponseDto>> getProductsByCategory(@PathVariable String name,
+
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<ProductResponseDto>> getProductsByCategory(@PathVariable String category,
                                                                           @RequestParam(required = false) Integer page,
                                                                           @RequestParam(required = false) Integer size) {
-        var products = productService.findProductsByCategory(name, page, size);
+        var products = productService.findProductsByCategory(category, page, size);
         return ResponseEntity.ok(products);
     }
+
 }
