@@ -38,6 +38,8 @@ public class OrderItemsService {
             throw new OrderItemProcessableException("Out of stock");
         }
 
+        product.setQuantityStock(product.getQuantityStock() - orderItemRequestDto.quantity());
+
         var orderItem = new OrderItem(null, order, product, orderItemRequestDto.quantity());
 
         return orderItemRepository.save(orderItem);
