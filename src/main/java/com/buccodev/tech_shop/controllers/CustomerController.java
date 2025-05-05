@@ -23,6 +23,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','BASIC', 'CUSTOMER')")
     @GetMapping("/{id}")
     public ResponseEntity<CustomerResponseDto> getCustomerById(@PathVariable Long id, Authentication authentication) {
         return ResponseEntity.ok(customerService.getCustomerById(id, authentication));
@@ -35,14 +36,16 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.getAllCustomers(page, size));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateCustomer(@PathVariable Long id,
-                                               @RequestBody CustomerRequestUpdateDto customerResquestUpdateDto,
+                                               @RequestBody CustomerRequestUpdateDto customerRequestUpdateDto,
                                                Authentication authentication) {
-        customerService.updateCustomer(id, customerResquestUpdateDto, authentication);
+        customerService.updateCustomer(id, customerRequestUpdateDto, authentication);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomerById(@PathVariable Long id, Authentication authentication) {
         customerService.deleteCustomerById(id, authentication);
@@ -54,6 +57,7 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.getByEmail(email, authentication));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<CustomerResponseDto> createCustomer(@RequestBody @Valid CustomerRequestDto customerRequestDto){
 
