@@ -1,8 +1,7 @@
 package com.buccodev.tech_shop.services;
 
-import com.buccodev.tech_shop.entities.Order;
-import com.buccodev.tech_shop.entities.OrderItem;
-import com.buccodev.tech_shop.entities.Product;
+import com.buccodev.tech_shop.entities.*;
+import com.buccodev.tech_shop.exceptions.CredentialInvalidException;
 import com.buccodev.tech_shop.exceptions.ResourceNotFoundException;
 import com.buccodev.tech_shop.repository.CustomerRepository;
 import com.buccodev.tech_shop.repository.OrderRepository;
@@ -14,6 +13,8 @@ import com.buccodev.tech_shop.utils.mappers.OrderMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 
@@ -53,7 +54,7 @@ public class OrderService {
 
     }
 
-    public List<OrderResponseDto> findAllOrdersByCustomerId(Long customerId, Integer page, Integer size) {
+    public List<OrderResponseDto> findAllOrdersByCustomerId(Long customerId, Authentication authentication, Integer page, Integer size) {
         if (page == null || page < 0) {
             page = 0;
         }
@@ -61,22 +62,28 @@ public class OrderService {
             size = 10;
         }
 
+        validateOrderOwnership(customerId, authentication);
+
         Pageable pageRequest = PageRequest.of(page, size);
 
         var customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
 
         return orderRepository.findByCustomerId(customer.getId(), pageRequest).stream()
                 .map(OrderMapper::toOrderResponseDtoFromOrder).toList();
 
     }
 
-    public OrderResponseDto getOrderById(Long id) {
+    public OrderResponseDto getOrderById(Long id, Authentication authentication) {
         var order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        validateOrderOwnership(order.getCustomer().getId(), authentication);
         return OrderMapper.toOrderResponseDtoFromOrder(order);
     }
 
-    public void deleteOrderById(Long id) {
+    public void deleteOrderById(Long id, Authentication authentication) {
+        validateOrderOwnership(id, authentication);
         var order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         orderRepository.deleteById(order.getId());
     }
@@ -87,7 +94,8 @@ public class OrderService {
     }
 
     @Transactional
-    public void updateOrder(Long id, List<OrderItemRequestDto> requestOrderDto) {
+    public void updateOrder(Long id, List<OrderItemRequestDto> requestOrderDto, Authentication authentication) {
+        validateOrderOwnership(id, authentication);
         var order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
 
@@ -100,6 +108,18 @@ public class OrderService {
         order.addOrderItem(listOrderItems);
 
         orderRepository.save(order);
+    }
+
+    private void validateOrderOwnership(Long userId, Authentication authentication) {
+
+        var user = (UserDetails) authentication.getPrincipal();
+
+        if(user instanceof Customer userCustomer) {
+
+            if (!userCustomer.getId().equals(userId)) {
+                throw new CredentialInvalidException("You don't have permission");
+            }
+        }
     }
     
 }

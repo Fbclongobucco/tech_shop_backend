@@ -6,6 +6,8 @@ import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerResponseDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestUpdateDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -22,10 +24,11 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerResponseDto> getCustomerById(@PathVariable Long id) {
-        return ResponseEntity.ok(customerService.getCustomerById(id));
+    public ResponseEntity<CustomerResponseDto> getCustomerById(@PathVariable Long id, Authentication authentication) {
+        return ResponseEntity.ok(customerService.getCustomerById(id, authentication));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','BASIC')")
     @GetMapping
     public ResponseEntity<List<CustomerResponseDto>> getAllCustomers(@RequestParam(required = false) Integer page,
                                                                      @RequestParam(required = false)  Integer size) {
@@ -34,15 +37,21 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateCustomer(@PathVariable Long id,
-                                               @RequestBody CustomerRequestUpdateDto customerResquestUpdateDto) {
-        customerService.updateCustomer(id, customerResquestUpdateDto);
+                                               @RequestBody CustomerRequestUpdateDto customerResquestUpdateDto,
+                                               Authentication authentication) {
+        customerService.updateCustomer(id, customerResquestUpdateDto, authentication);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomerById(@PathVariable Long id) {
-        customerService.deleteCustomerById(id);
+    public ResponseEntity<Void> deleteCustomerById(@PathVariable Long id, Authentication authentication) {
+        customerService.deleteCustomerById(id, authentication);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<CustomerResponseDto> getByEmail(@PathVariable String email, Authentication authentication) {
+        return ResponseEntity.ok(customerService.getByEmail(email, authentication));
     }
 
     @PostMapping

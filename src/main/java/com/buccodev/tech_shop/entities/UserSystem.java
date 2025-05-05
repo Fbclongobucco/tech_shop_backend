@@ -1,10 +1,16 @@
 package com.buccodev.tech_shop.entities;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users_system_tb")
-public class UserSystem {
+public class UserSystem implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +53,15 @@ public class UserSystem {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if(this.role == Roles.ADMIN){
+            return List.of(new SimpleGrantedAuthority("ROLE_" + Roles.BASIC.getRole().toUpperCase()),
+                           new SimpleGrantedAuthority("ROLE_" + Roles.ADMIN.getRole().toUpperCase()));
+        }
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name().toUpperCase()));
     }
 
     public String getPassword() {

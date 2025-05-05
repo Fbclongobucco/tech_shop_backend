@@ -4,6 +4,7 @@ import com.buccodev.tech_shop.services.CategoryService;
 import com.buccodev.tech_shop.utils.dtos.category_dtos.CategoryRequestDto;
 import com.buccodev.tech_shop.utils.dtos.category_dtos.CategoryResponseDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -19,6 +20,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<CategoryResponseDto> createCategory(@RequestBody CategoryRequestDto categoryRequestDto) {
         var categoryResponseDto = categoryService.createCategory(categoryRequestDto);

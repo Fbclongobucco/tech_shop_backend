@@ -12,3 +12,12 @@ spring:
             format_sql: true
         properties:
             hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+    level:
+        org.springframework.web: DEBUG
+        org.springframework.security: TRACE
+        com.buccodev.tech_shop: TRACE
+
+email_admin: ${EMAIL_ADMIN}
+password_admin: ${PASSWORD_ADMIN}

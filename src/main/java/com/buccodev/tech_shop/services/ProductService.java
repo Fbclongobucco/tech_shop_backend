@@ -78,9 +78,21 @@ public class ProductService {
         return productRepository.findAll(pageRequest).stream().map(ProductMapper::toProductResponseDto).toList();
     }
 
-    public ProductResponseDto findProductsByName(String name) {
-;       var product = productRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-        return ProductMapper.toProductResponseDto(product);
+    public List<ProductResponseDto> findProductsByName(String name, Integer page, Integer size) {
+        if (page == null || page < 0) {
+            page = 0;
+        }
+        if(size == null || size < 1) {
+            size = 10;
+        }
+        Pageable pages = PageRequest.of(page, size);
+
+
+        Specification<Product> categoryEqual = (root, query, cb)
+                -> cb.like( cb.upper( root.get("category").get("name")), "%" + name.toUpperCase() + "%");
+
+        return  productRepository.findAll(categoryEqual, pages).stream().map(ProductMapper::toProductResponseDto).toList();
+
     }
 
 
@@ -99,6 +111,12 @@ public class ProductService {
         return  productRepository.findAll(categoryEqual, pages).stream()
                 .map(ProductMapper::toProductResponseDto).toList();
 
+    }
+
+    public void updateStock(Long id, Integer quantityStock) {
+        var product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        product.setQuantityStock(product.getQuantityStock() + quantityStock);
+        productRepository.save(product);
     }
 
 

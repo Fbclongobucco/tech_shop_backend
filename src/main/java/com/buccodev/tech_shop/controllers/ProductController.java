@@ -4,7 +4,9 @@ import com.buccodev.tech_shop.services.ProductService;
 import com.buccodev.tech_shop.utils.dtos.product_dto.ProductRequestDto;
 import com.buccodev.tech_shop.utils.dtos.product_dto.ProductResponseDto;
 import com.buccodev.tech_shop.utils.dtos.product_dto.ProductUpdateRequestDto;
+import com.buccodev.tech_shop.utils.dtos.product_dto.UpdateStockDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +27,10 @@ public class ProductController {
     }
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<ProductResponseDto> getProductsByName(@PathVariable String name) {
-        return ResponseEntity.ok(productService.findProductsByName(name));
+    public ResponseEntity<List<ProductResponseDto>> getProductsByName(@PathVariable String name,
+                                                                @RequestParam(required = false) Integer page,
+                                                                @RequestParam(required = false) Integer size) {
+        return ResponseEntity.ok(productService.findProductsByName(name, page, size));
     }
 
     @GetMapping
@@ -35,18 +39,21 @@ public class ProductController {
         return ResponseEntity.ok(productService.findAllProducts(page, size));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'BASIC')")
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateProduct( @PathVariable Long id, @RequestBody ProductUpdateRequestDto productRequestDto) {
         productService.updateProduct(id, productRequestDto);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto productRequestDto) {
         return ResponseEntity.ok(productService.createProduct(productRequestDto));
@@ -59,6 +66,13 @@ public class ProductController {
                                                                           @RequestParam(required = false) Integer size) {
         var products = productService.findProductsByCategory(category, page, size);
         return ResponseEntity.ok(products);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','BASIC')")
+    @PutMapping("/stock/{id}")
+    public ResponseEntity<Void> updateStock(@PathVariable Long id, @RequestBody UpdateStockDto updateStockDto) {
+        productService.updateStock(id, updateStockDto.quantityStock());
+        return ResponseEntity.noContent().build();
     }
 
 }
