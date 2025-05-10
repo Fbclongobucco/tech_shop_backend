@@ -31,6 +31,7 @@ public class SecurityConfig {
 
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
@@ -46,9 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/customers/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/products/**").permitAll(
-
-                        )
+                        .requestMatchers(HttpMethod.GET,"/products/**").permitAll()
                         .requestMatchers("/login",
                                             "/logout").permitAll()
                         .anyRequest().authenticated()
