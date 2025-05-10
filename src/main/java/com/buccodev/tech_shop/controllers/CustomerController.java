@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tech-shop/customers")
+@RequestMapping("/customers")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -51,13 +51,12 @@ public class CustomerController {
         customerService.deleteCustomerById(id, authentication);
         return ResponseEntity.ok().build();
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @GetMapping("/email/{email}")
     public ResponseEntity<CustomerResponseDto> getByEmail(@PathVariable String email, Authentication authentication) {
         return ResponseEntity.ok(customerService.getByEmail(email, authentication));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<CustomerResponseDto> createCustomer(@RequestBody @Valid CustomerRequestDto customerRequestDto){
 

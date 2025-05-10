@@ -32,7 +32,7 @@ public class RunConfiguration implements CommandLineRunner {
             var userSystem = new UserSystem();
             userSystem.setEmail(emailAdmin);
             userSystem.setPassword(passwordEncoder.encode(passwordAdmin));
-            userSystem.setUsername(emailAdmin);
+            userSystem.setUsername("longobucco");
             userSystem.setRole(Roles.ADMIN);
             userSystemRepository.save(userSystem);
         }
