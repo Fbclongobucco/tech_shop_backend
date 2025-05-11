@@ -3,6 +3,7 @@ package com.buccodev.tech_shop.config;
 import com.buccodev.tech_shop.exceptions.ResourceNotFoundException;
 import com.buccodev.tech_shop.repository.CustomerRepository;
 import com.buccodev.tech_shop.repository.UserSystemRepository;
+import com.buccodev.tech_shop.utils.dtos.login_dto.LoginResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,8 +15,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
@@ -34,23 +33,29 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-
-        response.setContentType("application/json");
-
         String username = authentication.getName();
 
-        boolean isCustomer = customerRepository.findByEmail(username).isPresent();
-        boolean isSystemUser = userSystemRepository.findByEmail(username).isPresent();
+        if (customerRepository.findByEmail(username).isPresent()) {
+            response.setContentType("application/json");
 
-        if (isCustomer || isSystemUser) {
-            Map<String, String> jsonResponse = new HashMap<>();
-            jsonResponse.put("emailLogged", username);
+            var loginResponseDto = new LoginResponseDto(username);
 
-            response.getWriter().write(objectMapper.writeValueAsString(jsonResponse));
+            response.getWriter().write(
+                    objectMapper.writeValueAsString(loginResponseDto)
+            );
             return;
         }
 
-        response.sendRedirect("/login?error");
+        if (userSystemRepository.findByEmail(username).isPresent()) {
+            response.setContentType("application/json");
+            var loginResponseDto = new LoginResponseDto(username);
+
+            response.getWriter().write(
+                    objectMapper.writeValueAsString(loginResponseDto)
+            );
+            return;
+        }
+        response.sendRedirect("/tech-shop/login?error");
 
     }
 }
