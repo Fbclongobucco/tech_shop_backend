@@ -17,7 +17,7 @@ public class UserSystem implements UserDetails {
     private Long id;
 
     @Column(unique = true, nullable = false, length = 100)
-    private String username;
+    private String name;
 
     @Column(nullable = false, length = 300)
     private String password;
@@ -31,10 +31,10 @@ public class UserSystem implements UserDetails {
 
     public UserSystem() {}
 
-    public UserSystem(Long id, String username, String password, String email) {
+    public UserSystem(Long id, String name, String password, String email) {
         this.id = id;
-        this.username = username;
         this.password = password;
+        this.name = name;
         this.email = email;
         this.role = Roles.BASIC;
     }
@@ -51,8 +51,8 @@ public class UserSystem implements UserDetails {
         return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(String name) {
+        this.name = name;
     }
 
     @Override

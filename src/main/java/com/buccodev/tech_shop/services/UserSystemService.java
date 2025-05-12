@@ -84,7 +84,7 @@ public class UserSystemService {
 
     public UserSystemResponseDto findUserSystemsByName(String name, Authentication authentication) {
 
-        var userSystem = userSystemRepository.findByUsername(name).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        var userSystem = userSystemRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         validateOrderOwnership(userSystem.getId(), authentication);
         return UserSystemMapper.toUserSystemResponseDto(userSystem);
     }

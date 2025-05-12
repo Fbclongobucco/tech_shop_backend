@@ -5,6 +5,7 @@ import com.buccodev.tech_shop.utils.dtos.product_dto.ProductRequestDto;
 import com.buccodev.tech_shop.utils.dtos.product_dto.ProductResponseDto;
 import com.buccodev.tech_shop.utils.dtos.product_dto.ProductUpdateRequestDto;
 import com.buccodev.tech_shop.utils.dtos.product_dto.UpdateStockDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +56,7 @@ public class ProductController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto productRequestDto) {
+    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody @Valid ProductRequestDto productRequestDto) {
         return ResponseEntity.ok(productService.createProduct(productRequestDto));
     }
 

@@ -4,6 +4,7 @@ import com.buccodev.tech_shop.services.OrderService;
 import com.buccodev.tech_shop.utils.dtos.order_dtos.OrderRequestDto;
 import com.buccodev.tech_shop.utils.dtos.order_dtos.OrderResponseDto;
 import com.buccodev.tech_shop.utils.dtos.order_items_dtos.OrderItemRequestDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,7 +24,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto requestOrderDto) {
+    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody @Valid OrderRequestDto requestOrderDto) {
         var order = orderService.createOrder(requestOrderDto);
         URI uri = URI.create("/orders/" + order.id() );
         return ResponseEntity.created(uri).body(order);

@@ -1,4 +1,6 @@
 package com.buccodev.tech_shop.utils.dtos.category_dtos;
 
-public record CategoryRequestDto(String nameCategory) {
+import jakarta.validation.constraints.NotBlank;
+
+public record CategoryRequestDto(@NotBlank String nameCategory) {
 }

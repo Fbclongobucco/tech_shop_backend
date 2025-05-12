@@ -45,11 +45,16 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**").permitAll()
+                        .requestMatchers(
+                                "/css/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/login",
+                                "/logout",
+                                "/webjars/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/customers/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/products/**").permitAll()
-                        .requestMatchers("/login",
-                                            "/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
