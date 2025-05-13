@@ -7,10 +7,10 @@ import com.buccodev.tech_shop.utils.dtos.user_system_dto.UserSystemResponseDto;
 public class UserSystemMapper {
 
     public static UserSystemResponseDto toUserSystemResponseDto(UserSystem userSystem) {
-        return new UserSystemResponseDto(userSystem.getId(), userSystem.getUsername(), userSystem.getEmail(), userSystem.getRole());
+        return new UserSystemResponseDto(userSystem.getId(), userSystem.getName(), userSystem.getEmail(), userSystem.getRole());
     }
 
     public static UserSystem toUserSystem(UserSystemRequestDto userSystemRequestDto) {
-        return new UserSystem(null, userSystemRequestDto.username(), userSystemRequestDto.password(), userSystemRequestDto.email());
+        return new UserSystem(null, userSystemRequestDto.name(), userSystemRequestDto.password(), userSystemRequestDto.email());
     }
 }
