@@ -83,6 +83,8 @@ public class CustomerService {
         return CustomerMapper.toResponseCustomerDto(customer);
     }
 
+
+
     private void validateOrderOwnership(Long userId, Authentication authentication) {
 
         var user = (UserDetails) authentication.getPrincipal();

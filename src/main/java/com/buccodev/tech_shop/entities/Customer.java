@@ -44,6 +44,13 @@ public class Customer implements UserDetails {
     @Column(nullable = false, columnDefinition = "VARCHAR(20)")
     private Roles role;
 
+    @OneToOne
+    @JoinColumn(name = "default_address_id")
+    private Address defaultAddress;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Address> addresses = new ArrayList<>();
+
     public Customer() {}
 
     public Customer(Long id, String name, String email, String password, String phone) {
@@ -53,6 +60,7 @@ public class Customer implements UserDetails {
         this.password = password;
         this.phone = phone;
         this.role = Roles.CUSTOMER;
+        this.setDefaultAddress();
     }
 
     public Long getId() {
@@ -121,6 +129,26 @@ public class Customer implements UserDetails {
         return role.getRole();
     }
 
+    public Address getDefaultAddress() {
+        return defaultAddress;
+    }
+
+    public void setDefaultAddress(Address defaultAddress) {
+        this.defaultAddress = defaultAddress;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setDefaultAddress(){
+        for(Address address : addresses){
+            if(address.isDefault()){
+                this.defaultAddress = address;
+            }
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -132,4 +160,6 @@ public class Customer implements UserDetails {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+
 }

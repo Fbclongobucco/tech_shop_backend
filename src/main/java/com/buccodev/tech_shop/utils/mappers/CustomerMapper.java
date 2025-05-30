@@ -1,6 +1,7 @@
 package com.buccodev.tech_shop.utils.mappers;
 
 import com.buccodev.tech_shop.entities.Customer;
+import com.buccodev.tech_shop.utils.dtos.address_dtos.AddressResponseDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerResponseDto;
 
@@ -14,8 +15,13 @@ public class CustomerMapper {
         String formattedDate = (customer.getCreatedAt() != null)
                 ? customer.getCreatedAt().format(formatter)
                 : null;
+
+        AddressResponseDto addressResponse = (customer.getDefaultAddress() != null)
+                ? AddressMapper.toAddressResponseDto(customer.getDefaultAddress())
+                : null;
+
         return new CustomerResponseDto(customer.getId(), customer.getName(), customer.getEmail(),
-                customer.getPhone(), formattedDate);
+                customer.getPhone(), formattedDate, addressResponse);
     }
 
     public static Customer toCustomer(CustomerRequestDto requestCustomerDto) {
@@ -24,6 +30,6 @@ public class CustomerMapper {
 
     public static CustomerResponseDto toResponseCustomerDtoToOrder(Customer customer) {
         return new CustomerResponseDto(customer.getId(), customer.getName(), customer.getEmail(),
-                customer.getPhone(), null);
+                customer.getPhone(), null, null);
     }
 }

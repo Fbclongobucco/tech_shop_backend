@@ -88,8 +88,8 @@ public class UserSystem implements UserDetails {
         this.email = email;
     }
 
-    public Roles getRole() {
-        return role;
+    public String getRole() {
+        return role.getRole();
     }
 
     public void setRole(Roles role) {

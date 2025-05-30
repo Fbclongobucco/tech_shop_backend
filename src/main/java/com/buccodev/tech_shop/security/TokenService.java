@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
+
 
 @Service
 public class TokenService {
@@ -19,19 +20,19 @@ public class TokenService {
     @Value("${token.secret}")
     private String secret;
 
-    public String generateToken(UserDetails user) {
-        try {
+    public String generateToken(UserDetails user){
+        try{
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.create()
-                    .withIssuer("token-shop")
+            String token = JWT.create()
+                    .withIssuer("tech-shop")
                     .withSubject(user.getUsername())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
-        } catch (JWTCreationException e) {
+            return token;
+        } catch (JWTCreationException exception) {
             throw new JWTException("Error while generating token");
         }
     }
-
 
     public String validateToken(String token){
         try {
@@ -47,6 +48,10 @@ public class TokenService {
     }
 
     private Instant genExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now()
+                .plusHours(2)
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
     }
+
 }

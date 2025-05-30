@@ -4,5 +4,5 @@ import com.buccodev.tech_shop.entities.Roles;
 
 import javax.management.relation.Role;
 
-public record UserSystemResponseDto(Long id, String name, String email, Roles roles) {
+public record UserSystemResponseDto(Long id, String name, String email, String role) {
 }
