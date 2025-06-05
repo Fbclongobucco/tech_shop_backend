@@ -24,7 +24,6 @@ public class FindUserForAuthentication {
             return user.get();
         }
         return customerRepository.findByEmail(login).orElseThrow(()-> new ResourceNotFoundException("User not found"));
-
     }
 
 

@@ -7,16 +7,14 @@ import com.buccodev.tech_shop.utils.dtos.product_dto.ProductResponseDto;
 public class ProductMapper {
 
     public static Product productRequestDtoToProduct(ProductRequestDto productRequestDto) {
+
        var product = new Product(null, productRequestDto.name(), productRequestDto.description(),
-               CategoryMapper.toCategory(productRequestDto.category()), productRequestDto.price());
+               null, productRequestDto.price());
        if (productRequestDto.quantityStock() != null) {
            product.setQuantityStock(productRequestDto.quantityStock());
 
        }
 
-       if(productRequestDto.imageUrl() != null) {
-           product.setImageUrl(productRequestDto.imageUrl());
-       }
         return product;
     }
 

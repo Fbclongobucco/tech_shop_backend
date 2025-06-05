@@ -18,6 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 
 @Configuration
 @EnableWebSecurity
@@ -56,16 +58,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsFilter corsFilter() {
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        config.setAllowedOriginPatterns(List.of("*")); // Ou especifique suas origens ex: "http://localhost:3000"
+        config.setAllowedMethods(List.of("*"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+        config.setExposedHeaders(List.of("Authorization")); // Importante para o front-end acessar headers personalizados
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
-        return new CorsFilter(source);
+        return source;
     }
+
 
 }

@@ -34,40 +34,59 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto createProduct(ProductRequestDto productRequestDto, MultipartFile file) {
-         String urlImage;
-        try {
-           urlImage = minioService.uploadPhoto(file);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+        String urlImage;
+
+        if (file == null || file.isEmpty()) {
+            urlImage = "https://placehold.co/600x400";
+        } else {
+            urlImage = minioService.uploadPhoto(file);
         }
 
-        var category = categoryRepository.findByName(productRequestDto.category().nameCategory())
+        var category = categoryRepository.findByName(productRequestDto.category())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-        category.getProducts().add(ProductMapper.productRequestDtoToProduct(productRequestDto));
 
         var product = ProductMapper.productRequestDtoToProduct(productRequestDto);
         product.setImageUrl(urlImage);
         product.setCategory(category);
+        category.getProducts().add(product);
         productRepository.save(product);
         return ProductMapper.toProductResponseDto(product);
     }
 
     @Transactional
-    public void updateProduct(Long id, ProductUpdateRequestDto productRequestDto) {
-        var category = categoryRepository.findByName(productRequestDto.category().nameCategory())
+    public void updateProduct(Long id, ProductUpdateRequestDto productRequestDto, MultipartFile file) {
+        var category = categoryRepository.findByName(productRequestDto.category())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-        var product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        var product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+
+        if (file != null && !file.isEmpty()) {
+
+            if (product.getImageUrl() != null) {
+                minioService.deletePhoto(product.getImageUrl());
+            }
+
+            String newImageUrl = minioService.uploadPhoto(file);
+            product.setImageUrl(newImageUrl);
+        }
+
         product.setName(productRequestDto.name());
         product.setDescription(productRequestDto.description());
         product.setPrice(productRequestDto.price());
-        product.setImageUrl(productRequestDto.imageUrl());
         product.setQuantityStock(productRequestDto.quantityStock());
         product.setCategory(category);
+
         productRepository.save(product);
     }
 
     public void deleteProduct(Long id) {
         var product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        if (product.getImageUrl() != null) {
+            minioService.deletePhoto(product.getImageUrl());
+        }
         productRepository.deleteById(product.getId());
     }
 

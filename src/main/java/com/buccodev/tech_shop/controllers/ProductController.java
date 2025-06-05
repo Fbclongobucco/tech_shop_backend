@@ -6,9 +6,11 @@ import com.buccodev.tech_shop.utils.dtos.product_dto.ProductResponseDto;
 import com.buccodev.tech_shop.utils.dtos.product_dto.ProductUpdateRequestDto;
 import com.buccodev.tech_shop.utils.dtos.product_dto.UpdateStockDto;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,8 +31,8 @@ public class ProductController {
 
     @GetMapping("/name/{name}")
     public ResponseEntity<List<ProductResponseDto>> getProductsByName(@PathVariable String name,
-                                                                @RequestParam(required = false) Integer page,
-                                                                @RequestParam(required = false) Integer size) {
+                                                                      @RequestParam(required = false) Integer page,
+                                                                      @RequestParam(required = false) Integer size) {
         return ResponseEntity.ok(productService.findProductsByName(name, page, size));
     }
 
@@ -41,9 +43,13 @@ public class ProductController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'BASIC')")
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateProduct( @PathVariable Long id, @RequestBody ProductUpdateRequestDto productRequestDto) {
-        productService.updateProduct(id, productRequestDto);
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> updateProduct(
+            @PathVariable Long id,
+            @RequestPart("product") @Valid ProductUpdateRequestDto productRequestDto,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        productService.updateProduct(id, productRequestDto, file);
         return ResponseEntity.ok().build();
     }
 
@@ -55,9 +61,12 @@ public class ProductController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
-    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody @Valid ProductRequestDto productRequestDto) {
-        return ResponseEntity.ok(productService.createProduct(productRequestDto));
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProductResponseDto> createProduct(
+            @RequestPart("product") @Valid ProductRequestDto productRequestDto,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        return ResponseEntity.ok(productService.createProduct(productRequestDto, file));
     }
 
 
