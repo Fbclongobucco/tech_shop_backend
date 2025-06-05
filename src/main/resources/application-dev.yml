@@ -25,3 +25,5 @@ logging:
 
 email_admin: ${EMAIL_ADMIN}
 password_admin: ${PASSWORD_ADMIN}
+token:
+  secret: ${TOKEN_SECRET}

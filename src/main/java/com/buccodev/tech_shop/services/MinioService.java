@@ -30,7 +30,6 @@ public class MinioService {
                            .stream(file, photo.getSize(), -1)
                            .contentType("image/png")
                            .build()
-
             );
             return "http://localhost:9000/tech-shop-products/" + fileName;
         } catch (Exception e) {

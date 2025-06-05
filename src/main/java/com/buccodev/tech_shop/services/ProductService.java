@@ -14,7 +14,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -22,20 +24,30 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final MinioService minioService;
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository, MinioService minioService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.minioService = minioService;
     }
 
     @Transactional
-    public ProductResponseDto createProduct(ProductRequestDto productRequestDto) {
+    public ProductResponseDto createProduct(ProductRequestDto productRequestDto, MultipartFile file) {
+
+        var urlImage;
+        try {
+            urlImage = minioService.uploadPhoto(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         var category = categoryRepository.findByName(productRequestDto.category().nameCategory())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         category.getProducts().add(ProductMapper.productRequestDtoToProduct(productRequestDto));
 
         var product = ProductMapper.productRequestDtoToProduct(productRequestDto);
+        product.setImageUrl(urlImage);
         product.setCategory(category);
         productRepository.save(product);
         return ProductMapper.toProductResponseDto(product);
