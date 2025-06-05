@@ -34,10 +34,9 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto createProduct(ProductRequestDto productRequestDto, MultipartFile file) {
-
-        var urlImage;
+         String urlImage;
         try {
-            urlImage = minioService.uploadPhoto(file);
+           urlImage = minioService.uploadPhoto(file);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
