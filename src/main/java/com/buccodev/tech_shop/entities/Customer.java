@@ -133,6 +133,10 @@ public class Customer implements UserDetails {
         return defaultAddress;
     }
 
+    public void setRole(Roles role) {
+        this.role = role;
+    }
+
     public void setDefaultAddress(Address defaultAddress) {
         this.defaultAddress = defaultAddress;
     }
