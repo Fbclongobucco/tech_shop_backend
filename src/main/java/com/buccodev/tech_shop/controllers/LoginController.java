@@ -22,20 +22,16 @@ import java.util.Map;
 public class LoginController {
 
     private final AuthenticationService authenticationService;
-    private final GoogleTokenVerifierService googleTokenVerifier;
-    private final CustomerRepository customerRepository;
-    private final TokenService tokenService;
+    private final GoogleTokenVerifierService googleTokenVerifierService;
+
 
     public LoginController(AuthenticationService authenticationService,
-                           GoogleTokenVerifierService googleTokenVerifier,
-                           CustomerRepository customerRepository,
-                           TokenService tokenService) {
+                           GoogleTokenVerifierService googleTokenVerifierService
+                           ) {
         this.authenticationService = authenticationService;
-        this.googleTokenVerifier = googleTokenVerifier;
-        this.customerRepository = customerRepository;
-        this.tokenService = tokenService;
-    }
 
+        this.googleTokenVerifierService = googleTokenVerifierService;
+    }
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
         var loginResponseDto = authenticationService.login(loginRequestDto);
@@ -44,35 +40,10 @@ public class LoginController {
 
     @PostMapping("/google")
     public ResponseEntity<?> googleLogin(@RequestBody Map<String, String> request) {
-        String idToken = request.get("idToken");
 
-        GoogleIdToken.Payload payload = googleTokenVerifier.verify(idToken);
-        if (payload == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
-        }
-        String email = payload.getEmail();
-
-
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseGet(() -> createNewCustomerGoogle(payload));
-
-        String jwt = tokenService.generateToken(customer);
-
-        var UserLogged = new UserLoggedDto(customer.getId(), customer.getName(), customer.getEmail(), customer.getRole());
-
-        LoginResponseDto responseDto = new LoginResponseDto(UserLogged, jwt);
+        var responseDto = googleTokenVerifierService.login(request);
 
         return ResponseEntity.ok(responseDto);
     }
 
-    private Customer createNewCustomerGoogle(GoogleIdToken.Payload payload) {
-        Customer customer = new Customer();
-        customer.setEmail(payload.getEmail());
-        customer.setName((String) payload.get("name"));
-        customer.setCreatedAt(LocalDateTime.now());
-        customer.setPhone("00000000000");
-        customer.setPassword("password123");
-        customer.setRole(Roles.CUSTOMER);
-        return customerRepository.save(customer);
-    }
 }
