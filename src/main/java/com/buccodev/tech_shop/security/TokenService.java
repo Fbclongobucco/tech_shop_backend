@@ -4,6 +4,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.buccodev.tech_shop.exceptions.InvalidTokenException;
 import com.buccodev.tech_shop.exceptions.JWTException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,7 +44,7 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception){
-            return "";
+            throw new InvalidTokenException("token not found, expired or invalid");
         }
     }
 

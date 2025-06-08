@@ -107,4 +107,18 @@ public class ControllerErrorAdvice {
         return ResponseEntity.status(status).body(new StandardError(timestamp, status.value(), request.getRequestURI(), List.of(Map.of("message", e.getMessage()))));
     }
 
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<StandardError> handlerTokenExpiredException(TokenExpiredException e, HttpServletRequest request) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        var status = HttpStatus.UNAUTHORIZED;
+        return ResponseEntity.status(status).body(new StandardError(timestamp, status.value(), request.getRequestURI(), List.of(Map.of("message", e.getMessage()))));
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<StandardError> handlerTokenInvalidException(InvalidTokenException e, HttpServletRequest request) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        var status = HttpStatus.UNAUTHORIZED;
+        return ResponseEntity.status(status).body(new StandardError(timestamp, status.value(), request.getRequestURI(), List.of(Map.of("message", e.getMessage()))));
+    }
+
 }
