@@ -23,7 +23,7 @@ public class VerificationCodeService {
         this.userSystemRepository = userSystemRepository;
     }
 
-    public void saveVerificationCode(Long userId) {
+    public String saveVerificationCode(Long userId) {
 
         var customer = customerRepository.findById(userId);
         var code = UUID.randomUUID().toString();
@@ -42,6 +42,7 @@ public class VerificationCodeService {
          verificationCode.setExpirationTime(LocalDateTime.now().plusMinutes(10));
          verificationCodeRepository.save(verificationCode);
 
+        return code;
     }
 
     public boolean verifyCode(String code, Long userId) {
