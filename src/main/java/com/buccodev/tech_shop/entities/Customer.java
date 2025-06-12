@@ -51,6 +51,9 @@ public class Customer implements UserDetails {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
+    @Column(nullable = false)
+    private boolean isEnabled;
+
     public Customer() {}
 
     public Customer(Long id, String name, String email, String password, String phone) {
@@ -61,6 +64,7 @@ public class Customer implements UserDetails {
         this.phone = phone;
         this.role = Roles.CUSTOMER;
         this.setDefaultAddress();
+        this.isEnabled = false;
     }
 
     public Long getId() {
@@ -151,6 +155,15 @@ public class Customer implements UserDetails {
                 this.defaultAddress = address;
             }
         }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 
     @Override

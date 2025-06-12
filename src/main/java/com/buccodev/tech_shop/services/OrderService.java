@@ -44,6 +44,10 @@ public class OrderService {
 
         var order = new Order(null, customer, LocalDateTime.now());
 
+        if(!customer.isEnabled()){
+            throw new CredentialInvalidException("Customer is not enabled");
+        }
+
         var listOrderItems = requestOrderDto.orderItems().stream()
                 .map(items -> orderItemService.createOrderItem(items, order))
                 .toList();

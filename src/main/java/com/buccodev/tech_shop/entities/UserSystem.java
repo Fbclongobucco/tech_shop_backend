@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users_system_tb")
@@ -28,6 +29,8 @@ public class UserSystem implements UserDetails {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Roles role;
+
+    private boolean isEnabled;
 
     public UserSystem() {}
 
@@ -94,5 +97,26 @@ public class UserSystem implements UserDetails {
 
     public void setRole(Roles role) {
         this.role = role;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        UserSystem that = (UserSystem) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

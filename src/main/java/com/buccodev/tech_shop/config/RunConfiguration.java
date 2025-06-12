@@ -34,6 +34,7 @@ public class RunConfiguration implements CommandLineRunner {
             userSystem.setPassword(passwordEncoder.encode(passwordAdmin));
             userSystem.setUsername("longobucco");
             userSystem.setRole(Roles.ADMIN);
+            userSystem.setEnabled(true);
             userSystemRepository.save(userSystem);
         }
     }

@@ -21,7 +21,7 @@ public class CustomerMapper {
                 : null;
 
         return new CustomerResponseDto(customer.getId(), customer.getName(), customer.getEmail(),
-                customer.getPhone(), formattedDate, addressResponse);
+                customer.getPhone(),customer.isEnabled() ,formattedDate, addressResponse);
     }
 
     public static Customer toCustomer(CustomerRequestDto requestCustomerDto) {
@@ -30,6 +30,6 @@ public class CustomerMapper {
 
     public static CustomerResponseDto toResponseCustomerDtoToOrder(Customer customer) {
         return new CustomerResponseDto(customer.getId(), customer.getName(), customer.getEmail(),
-                customer.getPhone(), null, null);
+                customer.getPhone(), customer.isEnabled(), null, null);
     }
 }
