@@ -17,6 +17,19 @@ spring:
         properties:
             hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 
+    mail:
+      host: sandbox.smtp.mailtrap.io
+      port: 2525
+      username: 0b6f7c1216f1f4
+      password: 26a57185d1499b
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+
+
 logging:
     level:
         org.springframework.web: DEBUG
