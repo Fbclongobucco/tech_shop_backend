@@ -24,26 +24,21 @@ public class VerificationCodeService {
     }
 
     public String saveVerificationCode(Long userId) {
+        var code = UUID.randomUUID().toString();
 
         var customer = customerRepository.findById(userId);
-        var code = UUID.randomUUID().toString();
-        if(customer.isPresent()){
-            var verificationCode = new VerificationCode();
-            verificationCode.setCode(code);
-            verificationCode.setUserId(customer.get().getId());
-            verificationCode.setExpirationTime(LocalDateTime.now().plusMinutes(10));
-            verificationCodeRepository.save(verificationCode);
+        if (customer.isPresent()) {
+            saveCode(customer.get().getId(), code);
+            return code;
         }
 
-         var userSystem = userSystemRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("user not found"));
-         var verificationCode = new VerificationCode();
-         verificationCode.setCode(code);
-         verificationCode.setUserId(userSystem.getId());
-         verificationCode.setExpirationTime(LocalDateTime.now().plusMinutes(10));
-         verificationCodeRepository.save(verificationCode);
+        var userSystem = userSystemRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        saveCode(userSystem.getId(), code);
         return code;
     }
+
 
     public boolean verifyCode(String code, Long userId) {
         var verificationCode = verificationCodeRepository.findByUserId(userId);
@@ -57,5 +52,13 @@ public class VerificationCodeService {
     public void deleteVerificationCode(Long userId) {
         var verificationCode = verificationCodeRepository.findByUserId(userId);
         verificationCode.ifPresent(verificationCodeRepository::delete);
+    }
+
+    private void saveCode(Long userId, String code) {
+        var verificationCode = new VerificationCode();
+        verificationCode.setCode(code);
+        verificationCode.setUserId(userId);
+        verificationCode.setExpirationTime(LocalDateTime.now().plusMinutes(10));
+        verificationCodeRepository.save(verificationCode);
     }
 }

@@ -1,6 +1,7 @@
 package com.buccodev.tech_shop.services;
 
 import com.buccodev.tech_shop.entities.Customer;
+import com.buccodev.tech_shop.entities.VerificationCode;
 import com.buccodev.tech_shop.exceptions.CredentialInvalidException;
 import com.buccodev.tech_shop.exceptions.ResourceDuplicateException;
 import com.buccodev.tech_shop.exceptions.ResourceNotFoundException;
@@ -8,6 +9,7 @@ import com.buccodev.tech_shop.repository.CustomerRepository;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestUpdateDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerResponseDto;
+import com.buccodev.tech_shop.utils.dtos.email_dto.Email;
 import com.buccodev.tech_shop.utils.mappers.CustomerMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
@@ -18,16 +20,21 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+    private final VerificationCodeService verificationCodeService;
 
-    public CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
+    public CustomerService(CustomerRepository customerRepository, PasswordEncoder passwordEncoder, EmailService emailService, VerificationCodeService verificationCodeService) {
         this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
+        this.verificationCodeService = verificationCodeService;
     }
 
     public CustomerResponseDto createCustomer(CustomerRequestDto requestCustomerDto) {
@@ -36,11 +43,21 @@ public class CustomerService {
             throw new ResourceDuplicateException("Customer with email " + requestCustomerDto.email() + " already exists");
         }
 
-        var customer = CustomerMapper.toCustomer(requestCustomerDto);
-        customer.setPassword(passwordEncoder.encode(requestCustomerDto.password()));
-        customer.setCreatedAt(LocalDateTime.now());
+        var newCustomer = CustomerMapper.toCustomer(requestCustomerDto);
+        newCustomer.setPassword(passwordEncoder.encode(requestCustomerDto.password()));
+        newCustomer.setCreatedAt(LocalDateTime.now());
 
-        return CustomerMapper.toResponseCustomerDto(customerRepository.save(customer));
+
+        var customerSave = customerRepository.save(newCustomer);
+        var code = verificationCodeService.saveVerificationCode(customerSave.getId());
+        var email = new Email(
+                newCustomer.getEmail(),
+                "Bem vindo a Tech Shop",
+                "Olá " + newCustomer.getName() + ", bem vindo ao Tech Shop. Clique no link pra verificação do seu email: http://localhost:3000/verify-email/"+ code
+        );
+        emailService.sendEmail(email);
+
+        return CustomerMapper.toResponseCustomerDto(customerSave);
     }
 
     @Transactional
