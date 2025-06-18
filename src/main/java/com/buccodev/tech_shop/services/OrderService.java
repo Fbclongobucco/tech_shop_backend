@@ -40,7 +40,6 @@ public class OrderService {
 
         var customer = customerRepository.findById(requestOrderDto.customerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
         var order = new Order(null, customer, LocalDateTime.now());
 
