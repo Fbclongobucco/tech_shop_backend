@@ -10,6 +10,7 @@ import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestUpdateDto
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerRequestDto;
 import com.buccodev.tech_shop.utils.dtos.customers_dtos.CustomerResponseDto;
 import com.buccodev.tech_shop.utils.dtos.email_dto.Email;
+import com.buccodev.tech_shop.utils.dtos.login_dto.PasswordResetDto;
 import com.buccodev.tech_shop.utils.mappers.CustomerMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.PageRequest;
@@ -53,7 +54,8 @@ public class CustomerService {
         var email = new Email(
                 newCustomer.getEmail(),
                 "Bem vindo a Tech Shop",
-                "Olá " + newCustomer.getName() + ", bem vindo ao Tech Shop. Clique no link pra verificação do seu email: http://localhost:3000/verify-email/"+ code
+                code,
+                newCustomer.getName()
         );
         emailService.sendEmail(email);
 

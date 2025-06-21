@@ -39,6 +39,11 @@ public class VerificationCodeService {
         return code;
     }
 
+    public VerificationCode getVerificationCodeByCode(String code) {
+        return verificationCodeRepository.findByCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException("Verification code not found"));
+    }
+
 
     public boolean verifyCode(String code, Long userId) {
         var verificationCode = verificationCodeRepository.findByUserId(userId);
