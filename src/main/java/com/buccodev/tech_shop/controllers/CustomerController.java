@@ -51,6 +51,7 @@ public class CustomerController {
         customerService.deleteCustomerById(id, authentication);
         return ResponseEntity.ok().build();
     }
+
     @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @GetMapping("/email/{email}")
     public ResponseEntity<CustomerResponseDto> getByEmail(@PathVariable String email, Authentication authentication) {
@@ -65,6 +66,13 @@ public class CustomerController {
         URI uri = URI.create("/tech-shop/customers/" + customer.id());
 
         return ResponseEntity.created(uri).body(customer);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    @GetMapping("/verify-email/{email}")
+    public ResponseEntity<Void> verifyEmail(@PathVariable String email, Authentication authentication) {
+        customerService.sendVerificationCode(email, authentication);
+        return ResponseEntity.ok().build();
     }
 
 }

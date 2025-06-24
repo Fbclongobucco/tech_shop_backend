@@ -62,6 +62,22 @@ public class CustomerService {
         return CustomerMapper.toResponseCustomerDto(customerSave);
     }
 
+    public void sendVerificationCode(String email, Authentication authentication) {
+
+        var customer = customerRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+
+        validateOrderOwnership(customer.getId(), authentication);
+
+        var code = verificationCodeService.saveVerificationCode(customer.getId());
+        var emailDto = new Email(
+                customer.getEmail(),
+                "Bem vindo a Tech Shop",
+                code,
+                customer.getName()
+        );
+        emailService.sendEmail(emailDto);
+    }
+
     @Transactional
     public void updateCustomer(Long id, CustomerRequestUpdateDto requestUpdateDto, Authentication authentication) {
         validateOrderOwnership(id, authentication);

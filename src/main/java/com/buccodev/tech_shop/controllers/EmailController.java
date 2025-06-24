@@ -1,8 +1,6 @@
 package com.buccodev.tech_shop.controllers;
 
 import com.buccodev.tech_shop.services.EmailService;
-import com.buccodev.tech_shop.services.VerificationCodeService;
-import com.buccodev.tech_shop.utils.dtos.email_dto.Email;
 import com.buccodev.tech_shop.utils.dtos.login_dto.PasswordResetDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
