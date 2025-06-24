@@ -86,8 +86,13 @@ public class OrderService {
     }
 
     public void deleteOrderById(Long id, Authentication authentication) {
-        validateOrderOwnership(id, authentication);
+
         var order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        var customer = customerRepository.findById(order.getCustomer().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        validateOrderOwnership(customer.getId(), authentication);
+
         orderRepository.deleteById(order.getId());
     }
 
@@ -98,9 +103,9 @@ public class OrderService {
 
     @Transactional
     public void updateOrder(Long id, List<OrderItemRequestDto> requestOrderDto, Authentication authentication) {
-        validateOrderOwnership(id, authentication);
-        var order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
+        var order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+       validateOrderOwnership(order.getCustomer().getId(), authentication);
 
         var listOrderItems = requestOrderDto.stream()
                 .map(items -> orderItemService.createOrderItem(items, order))

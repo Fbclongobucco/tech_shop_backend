@@ -17,7 +17,9 @@ public class OrderMapper {
             CustomerMapper.toResponseCustomerDtoToOrder(order.getCustomer()),
             order.getCreatedAt().format(formatter),
             order.getOrderItems().stream().map(OrderItemMapper::toOrderItem).toList(),
-            order.getTotalValue()
+            order.getTotalValue(),
+            AddressMapper.toAddressResponseDto(order.getAddress()),
+            order.getStatus()
         ) ;
     }
 

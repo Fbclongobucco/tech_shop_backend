@@ -27,9 +27,16 @@ public class Order {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal totalValue;
 
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Address address;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+   @Enumerated(EnumType.STRING)
+   @Column(nullable = false, columnDefinition = "VARCHAR(20)")
+   private OrderStatus status;
 
     public Order() {}
 
@@ -37,6 +44,8 @@ public class Order {
         this.id = id;
         this.customer = customer;
         this.createdAt = createdAt;
+        this.address = customer.getDefaultAddress();
+        this.status = OrderStatus.PENDING;
         calculateTotalValue();
     }
 
@@ -86,6 +95,16 @@ public class Order {
         this.totalValue = totalValue;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+    public String getStatus() {
+        return status.getStatus();
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -48,7 +48,7 @@ public class Customer implements UserDetails {
     @JoinColumn(name = "default_address_id")
     private Address defaultAddress;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Address> addresses = new ArrayList<>();
 
     @Column(nullable = false)

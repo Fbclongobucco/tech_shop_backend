@@ -29,7 +29,7 @@ public class AddressService {
 
         var addressRecovered = customer.getDefaultAddress();
 
-        if (addressRecovered != null) {
+        if (addressRecovered == null) {
             var address = AddressMapper.toAddress(addressRequestDto);
             address.setCustomer(customer);
             addressRepository.save(address);
